@@ -64,11 +64,19 @@ class GemmaClient:
         
         prompt = f"{system_instruction}\n\nSTEM TOPIC TO ANIMATE: {topic}"
         
-        models_to_try = [self.model_name]
-        if "gemma-4" in self.model_name:
-            if "31b" not in self.model_name:
-                models_to_try.append("gemma-4-31b-it")
-            models_to_try.append("gemini-3.8-flash")
+        priority_models = [
+            self.model_name,
+            "gemma-4-26b-a4b-it",
+            "gemma-4-31b-it",
+            "gemini-3.1-flash-lite",
+            "gemini-flash-lite-latest",
+            "gemini-3.5-flash",
+            "gemini-3.8-flash"
+        ]
+        models_to_try = []
+        for m in priority_models:
+            if m not in models_to_try:
+                models_to_try.append(m)
             
         last_error = None
         for m in models_to_try:
@@ -97,18 +105,31 @@ class GemmaClient:
             f"Please fix the code. Return ONLY the corrected Python code, without explanations or fences."
         )
         
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=fix_prompt
-        )
+        models_to_try = [
+            self.model_name,
+            "gemma-4-26b-a4b-it",
+            "gemini-3.1-flash-lite",
+            "gemini-flash-lite-latest",
+            "gemini-3.5-flash"
+        ]
         
-        fixed_text = response.text.strip()
-        if fixed_text.startswith("```"):
-            lines = fixed_text.splitlines()
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            fixed_text = "\n".join(lines).strip()
-            
-        return fixed_text
+        for m in models_to_try:
+            try:
+                response = self.client.models.generate_content(
+                    model=m,
+                    contents=fix_prompt
+                )
+                if response and response.text:
+                    fixed_text = response.text.strip()
+                    if fixed_text.startswith("```"):
+                        lines = fixed_text.splitlines()
+                        if lines[0].startswith("```"):
+                            lines = lines[1:]
+                        if lines and lines[-1].strip() == "```":
+                            lines = lines[:-1]
+                        fixed_text = "\n".join(lines).strip()
+                    return fixed_text
+            except Exception as e:
+                print(f"[Harness Notice] Self-heal model '{m}' returned: {e}. Trying fallback...")
+                
+        return broken_code
