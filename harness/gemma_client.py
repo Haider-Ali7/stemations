@@ -62,23 +62,28 @@ class GemmaClient:
             f"and include 3 sequential follow-up topics to deepen student learning."
         )
         
-        try:
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=f"{system_instruction}\n\n---\nUSER REQUEST:\n{user_prompt}"
-            )
-        except Exception as e:
-            # If specified gemma preview model is unavailable on this key, attempt fallback
-            if "gemma-4" in self.model_name:
-                print(f"[Harness Notice] '{self.model_name}' returned error: {e}. Attempting fallback...")
+        prompt = f"{system_instruction}\n\nSTEM TOPIC TO ANIMATE: {topic}"
+        
+        models_to_try = [self.model_name]
+        if "gemma-4" in self.model_name:
+            if "31b" not in self.model_name:
+                models_to_try.append("gemma-4-31b-it")
+            models_to_try.append("gemini-3.8-flash")
+            
+        last_error = None
+        for m in models_to_try:
+            try:
                 response = self.client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=f"{system_instruction}\n\n---\nUSER REQUEST:\n{user_prompt}"
+                    model=m,
+                    contents=prompt
                 )
-            else:
-                raise e
+                if response and response.text:
+                    return self._clean_json_response(response.text)
+            except Exception as e:
+                last_error = e
+                print(f"[Harness Notice] Model '{m}' returned: {e}. Trying next available model...")
                 
-        return self._clean_json_response(response.text)
+        raise RuntimeError(f"All model attempts failed. Last error: {last_error}")
 
     def self_heal_manim_code(self, broken_code: str, error_traceback: str) -> str:
         """

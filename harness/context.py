@@ -51,20 +51,23 @@ class SkillContextLoader:
         }
 
     def build_system_prompt(self) -> str:
-        """Constructs the comprehensive system prompt for Gemma 4."""
-        skill_data = self.load_skill()
-        skill_name = skill_data["metadata"].get("name", "stem-animator")
-        
+        """Constructs a clean, high-impact system prompt for Gemma 4."""
         prompt = (
-            f"You are an expert STEM educator and Manim animation software engineer.\n"
-            f"You are operating under the Agent Skill '{skill_name}'.\n\n"
-            f"SKILL SPECIFICATION & RULES:\n"
-            f"{skill_data['instructions']}\n\n"
-            f"CRITICAL REQUIREMENTS:\n"
-            f"1. You MUST respond with ONLY a single valid JSON object, without backticks or markdown code fences.\n"
-            f"2. The JSON keys must be exactly: 'topic', 'narration_script', 'manim_code', and 'next_topics'.\n"
-            f"3. 'manim_code' must be complete, executable Python code with Scene class named 'StemationScene'.\n"
-            f"4. The animation must be vertical (1080x1920) and duration between 15 and 25 seconds.\n"
-            f"5. 'next_topics' must be an array of 3 real, sequential follow-up STEM concepts.\n"
+            "You are an expert STEM educator and Manim animation software engineer.\n"
+            "Generate a vertical (9:16) educational animation for the requested STEM concept.\n\n"
+            "STRICT RULES:\n"
+            "1. Output MUST be ONLY a single valid JSON object, with NO markdown code fences around the JSON.\n"
+            "2. JSON Keys required:\n"
+            "   - 'topic': Concept name string\n"
+            "   - 'narration_script': Concise 25-35 word spoken script (~15-20s duration)\n"
+            "   - 'manim_code': Self-contained executable Python code with Scene subclass named 'StemationScene'\n"
+            "   - 'next_topics': Array of 3 sequential STEM topics to learn next\n\n"
+            "MANIM RULES:\n"
+            "- Canvas: config.pixel_width=1080, config.pixel_height=1920, config.frame_width=9.0, config.frame_height=16.0\n"
+            "- Background: '#0F172A', safe zone x in [-3.8, 3.8], y in [-6.0, 6.0]\n"
+            "- Header text around y=5.5 to 6.0, main visual center around y=0.5 to 1.5, explanation around y=-3.5 to -4.5\n"
+            "- Use Text() with clean unicode for formulas (avoid latex compilation dependency)\n"
+            "- Smooth animations using Create, Transform, FadeIn, FadeOut, run_time 1.0 to 1.5s\n"
+            "- End scene with self.wait(2)\n"
         )
         return prompt

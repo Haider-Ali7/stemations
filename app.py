@@ -66,7 +66,7 @@ with st.sidebar:
     
     model_choice = st.selectbox(
         "Gemma Model:",
-        ["gemma-4-26b-a4b-it", "gemini-2.5-flash", "gemma-2-9b-it"],
+        ["gemma-4-26b-a4b-it", "gemma-4-31b-it", "gemini-3.8-flash"],
         index=0,
         help="Calls Gemma 4 through the Google GenAI SDK (Gemini API)"
     )
