@@ -51,23 +51,32 @@ class SkillContextLoader:
         }
 
     def build_system_prompt(self) -> str:
-        """Constructs a clean, high-impact system prompt for Gemma 4."""
+        """Constructs a clean, high-impact system prompt for Gemma 4 using SKILL.md."""
+        skill_data = self.load_skill()
+        skill_instructions = skill_data.get("instructions", "")
+        
         prompt = (
             "You are an expert STEM educator and Manim animation software engineer.\n"
-            "Generate a vertical (9:16) educational animation for the requested STEM concept.\n\n"
-            "STRICT RULES:\n"
-            "1. Output MUST be ONLY a single valid JSON object, with NO markdown code fences around the JSON.\n"
-            "2. JSON Keys required:\n"
-            "   - 'topic': Concept name string\n"
-            "   - 'narration_script': Concise 25-35 word spoken script (~15-20s duration)\n"
-            "   - 'manim_code': Self-contained executable Python code with Scene subclass named 'StemationScene'\n"
-            "   - 'next_topics': Array of 3 sequential STEM topics to learn next\n\n"
-            "MANIM RULES:\n"
-            "- Canvas: config.pixel_width=1080, config.pixel_height=1920, config.frame_width=9.0, config.frame_height=16.0\n"
-            "- Background: '#0F172A', safe zone x in [-3.8, 3.8], y in [-6.0, 6.0]\n"
-            "- Header text around y=5.5 to 6.0, main visual center around y=0.5 to 1.5, explanation around y=-3.5 to -4.5\n"
-            "- Use Text() with clean unicode for formulas (avoid latex compilation dependency)\n"
-            "- Smooth animations using Create, Transform, FadeIn, FadeOut, run_time 1.0 to 1.5s\n"
-            "- End scene with self.wait(2)\n"
+            "Your mission: synthesize a pedagogically crystal-clear, highly engaging vertical (9:16) educational animation\n"
+            "that completely and intuitively conveys ONE SINGLE STEM CONCEPT in 35 to 50 seconds (STRICTLY UNDER 60 SECONDS).\n\n"
+            "=== AGENT SKILL SPECIFICATION (stem-animator) ===\n"
+            f"{skill_instructions}\n"
+            "=================================================\n\n"
+            "MANDATORY EXECUTION DIRECTIVES:\n"
+            "1. HOOK & ENGAGEMENT: Narration MUST start with an irresistible curiosity question or surprising real-world hook.\n"
+            "   Directly engage the viewer throughout ('Notice what happens...', 'Look at this pattern...').\n"
+            "2. LENGTH & TIMING: Video must be 35 to 50 seconds (UNDER 60 SECONDS). Narration script must be 75 to 110 words.\n"
+            "   Manim scene must have 4-6 sequential animated beats with self.wait(1.5) pauses to match the ~40s voiceover.\n"
+            "3. Canvas: config.pixel_width=1080, config.pixel_height=1920, config.frame_width=9.0, config.frame_height=16.0, background_color='#0F172A'.\n"
+            "4. Coordinate bounds: x in [-3.6, 3.6], y in [-6.0, 6.0]. Never let text or shapes overflow the screen.\n"
+            "5. Portability: Use Text() with clean unicode symbols for math/equations (NEVER MathTex or Tex) to guarantee rendering without LaTeX.\n"
+            "6. Scene class MUST be named StemationScene(Scene).\n"
+            "7. Output MUST be ONLY a single valid JSON object without markdown code fences:\n"
+            "   {\n"
+            '     "topic": "<Concept Name>",\n'
+            '     "narration_script": "<75-110 word engaging script with curiosity hook, step-by-step guidance, and payoff>",\n'
+            '     "manim_code": "<100% executable Python Manim script with 35-50s runtime>",\n'
+            '     "next_topics": ["<Next Topic 1>", "<Next Topic 2>", "<Next Topic 3>"]\n'
+            "   }\n"
         )
         return prompt

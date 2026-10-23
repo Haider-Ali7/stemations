@@ -29,35 +29,56 @@ def compose_video_and_audio(
     unique_id = uuid.uuid4().hex[:8]
     final_output = out_dir / f"stemation_{unique_id}.mp4"
     
-    # 1. Primary Strategy: Try MoviePy
+    # 1. Primary Strategy: Try MoviePy (v1 editor API or v2 top-level imports)
     try:
-        from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
-        
+        try:
+            from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
+        except ImportError:
+            from moviepy import VideoFileClip, AudioFileClip
+            from moviepy.video.compositing.CompositeVideoClip import concatenate_videoclips
+
         video_clip = VideoFileClip(video_path)
         audio_clip = AudioFileClip(audio_path)
-        
+
         v_dur = video_clip.duration
         a_dur = audio_clip.duration
-        
+
         if a_dur > v_dur:
-            # Hold last frame to finish audio
             freeze_duration = a_dur - v_dur + 0.5
-            last_frame = video_clip.to_ImageClip(max(0, v_dur - 0.05)).set_duration(freeze_duration)
+            last_frame = video_clip.to_ImageClip(max(0, v_dur - 0.05))
+            if hasattr(last_frame, "with_duration"):
+                last_frame = last_frame.with_duration(freeze_duration)
+            else:
+                last_frame = last_frame.set_duration(freeze_duration)
             combined_video = concatenate_videoclips([video_clip, last_frame])
         else:
             combined_video = video_clip
-            
-        final_clip = combined_video.set_audio(audio_clip)
-        final_clip.write_videofile(
-            str(final_output),
-            codec="libx264",
-            audio_codec="aac",
-            temp_audiofile=str(out_dir / f"temp_{unique_id}.m4a"),
-            remove_temp=True,
-            verbose=False,
-            logger=None
-        )
-        
+
+        if hasattr(combined_video, "with_audio"):
+            final_clip = combined_video.with_audio(audio_clip)
+        else:
+            final_clip = combined_video.set_audio(audio_clip)
+
+        try:
+            final_clip.write_videofile(
+                str(final_output),
+                codec="libx264",
+                audio_codec="aac",
+                temp_audiofile=str(out_dir / f"temp_{unique_id}.m4a"),
+                remove_temp=True,
+                verbose=False,
+                logger=None,
+            )
+        except TypeError:
+            final_clip.write_videofile(
+                str(final_output),
+                codec="libx264",
+                audio_codec="aac",
+                temp_audiofile=str(out_dir / f"temp_{unique_id}.m4a"),
+                remove_temp=True,
+                logger=None,
+            )
+
         video_clip.close()
         audio_clip.close()
         
@@ -70,8 +91,11 @@ def compose_video_and_audio(
     except Exception as moviepy_err:
         # 2. Fallback Strategy: Direct FFmpeg command
         try:
+            import shutil
+            import imageio_ffmpeg
+            ffmpeg_exe = shutil.which("ffmpeg") or imageio_ffmpeg.get_ffmpeg_exe()
             cmd = [
-                "ffmpeg", "-y",
+                ffmpeg_exe, "-y",
                 "-i", video_path,
                 "-i", audio_path,
                 "-c:v", "copy",

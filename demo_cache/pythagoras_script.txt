@@ -1,0 +1,1 @@
+Pythagorean Theorem Geometric Proof: visualize the relationship between sides of a right triangle. Squares on the legs combine to match the square on the hypotenuse.

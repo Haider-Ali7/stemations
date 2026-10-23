@@ -35,20 +35,27 @@ def generate_voiceover(
     unique_id = uuid.uuid4().hex[:8]
     audio_file = out_path / f"voice_{unique_id}.mp3"
     
-    try:
+    def _run_coro(coro):
+        import concurrent.futures
+
+        def _thread_main():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                return loop.run_until_complete(coro)
+            finally:
+                loop.close()
+
         try:
-            # Handle existing event loop if called inside async framework or streamlit
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                # Run in worker thread
-                import concurrent.futures
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    future = executor.submit(asyncio.run, _generate_audio_async(text, str(audio_file), voice))
-                    future.result()
-            else:
-                loop.run_until_complete(_generate_audio_async(text, str(audio_file), voice))
+            asyncio.get_running_loop()
         except RuntimeError:
-            asyncio.run(_generate_audio_async(text, str(audio_file), voice))
+            return asyncio.run(coro)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            return executor.submit(_thread_main).result()
+
+    try:
+        _run_coro(_generate_audio_async(text, str(audio_file), voice))
             
         if audio_file.exists() and audio_file.stat().st_size > 0:
             return {

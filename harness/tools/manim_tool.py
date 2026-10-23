@@ -32,13 +32,23 @@ def render_manim_code(code: str, output_dir: str = "_output/scenes") -> Dict[str
     media_dir = out_path / "media"
     media_dir.mkdir(parents=True, exist_ok=True)
     
+    import re
+    # Dynamically detect scene class name, default to StemationScene
+    scene_match = re.search(r"class\s+([A-Za-z0-9_]+)\s*\(\s*(?:ThreeD)?Scene\s*\):", code)
+    scene_class_name = scene_match.group(1) if scene_match else "StemationScene"
+
+    env = os.environ.copy()
+    scripts_path = os.path.join(os.path.dirname(sys.executable), "Scripts")
+    if scripts_path not in env.get("PATH", ""):
+        env["PATH"] = f"{scripts_path}{os.pathsep}{env.get('PATH', '')}"
+
     # Use python -m manim to ensure it works across all Windows/Mac/Linux environments
     cmd = [
         sys.executable, "-m", "manim",
         "-ql",  # Low quality for ultra-fast rendering (ideal for live hackathon demos)
         "--media_dir", str(media_dir),
         str(scene_file),
-        "StemationScene"
+        scene_class_name
     ]
     
     try:
@@ -47,6 +57,7 @@ def render_manim_code(code: str, output_dir: str = "_output/scenes") -> Dict[str
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            env=env,
             timeout=90  # 90-second timeout guardrail
         )
         
@@ -63,7 +74,7 @@ def render_manim_code(code: str, output_dir: str = "_output/scenes") -> Dict[str
             }
             
         # Search for the rendered .mp4 file
-        rendered_videos = list(media_dir.glob("**/StemationScene.mp4"))
+        rendered_videos = list(media_dir.glob(f"**/{scene_class_name}.mp4"))
         if not rendered_videos:
             # Fallback search for any mp4 created
             rendered_videos = list(media_dir.glob("**/*.mp4"))

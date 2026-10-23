@@ -1,46 +1,38 @@
 # 🎬 Stemations (STEM + Animations)
 
-> **Our app helps students and educators turn complex STEM concepts into accurate, code-rendered animated explainer videos with synchronized voiceover and next-topic learning pathways using Gemma 4.**
+> **Autonomous AI Agent turning complex STEM concepts into mathematically precise, 9:16 vertical animated explainers with synchronized neural voiceover and adaptive learning pathways.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Model: Gemma 4](https://img.shields.io/badge/Model-Gemma%204%20(Apache%202.0)-blue.svg)](https://ai.google.dev/gemma)
-[![Skill: Agent Skill Open Standard](https://img.shields.io/badge/Standard-Agent%20Skill-green.svg)](skills/stem-animator/SKILL.md)
-[![Built with: Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red.svg)](https://streamlit.io/)
-[![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
+[![Standard: Agent Skill](https://img.shields.io/badge/Standard-Agent%20Skill%20Open%20Standard-green.svg)](skills/stem-animator/SKILL.md)
+[![Renderer: Manim Community](https://img.shields.io/badge/Renderer-Manim%20CE%20v0.22-orange.svg)](https://www.manim.community/)
+[![Frontend: Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red.svg)](https://streamlit.io/)
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 
 ---
 
 ## 📌 Table of Contents
-- [The Problem](#-the-problem)
-- [The Solution: Simple & Reliable](#-the-solution-simple--reliable)
+- [Why Stemations?](#-why-stemations)
 - [Hackathon Prize Alignment](#-hackathon-prize-alignment)
-- [System Architecture & Flow](#-system-architecture--flow)
+- [How It Works (System Architecture)](#-how-it-works-system-architecture)
 - [Key Features](#-key-features)
-- [Agent Skill & Model Harness](#-agent-skill--model-harness)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [How to Run the Demo](#-how-to-run-the-demo)
-- [License & Attributions](#-license--attributions)
-
-
----
-
-## 💡 The Problem
-
-STEM education thrives on visual intuition (e.g., how algorithms sort arrays, how geometric proofs work, or how calculus derivatives behave). However:
-1. **Manual Coding is Painstaking:** Producing 3Blue1Brown-style animations using Python's `manim` library requires deep programming skills and hours of manual trial-and-error.
-2. **Generative AI Video Hallucinates:** Diffusion and prompt-to-pixel models (Sora, Runway) cannot reliably render mathematical symbols, algorithm state diagrams, or exact geometric angles. They generate blurry or physically impossible visuals.
+- [Agent Skill Open Standard Compliance](#-agent-skill-open-standard-compliance)
+- [Repository Structure](#-repository-structure)
+- [Quickstart Guide](#-quickstart-guide)
+- [Fail-Safe Venue Backup Mode](#-fail-safe-venue-backup-mode)
+- [Documentation & Presentation Playbook](#-documentation--presentation-playbook)
+- [Team & Acknowledgments](#-team--acknowledgments)
 
 ---
 
-## 🚀 The Solution: Simple & Reliable
+## 💡 Why Stemations?
 
-**Stemations** bridges this gap with an intuitive, deterministic code-generation pipeline:
-- You type a STEM concept (e.g., *"Binary Search"*, *"Pythagorean Theorem"*).
-- **Gemma 4** acts as the core reasoning engine via the **Stemations Harness**.
-- Guided by an **Agent Skill** (`skills/stem-animator/`), Gemma writes verifiable, vertical (9:16) **Manim Python code** and an accompanying concise narration script.
-- The harness compiles the animation, synthesizes neural voiceover, stitches them together, and presents an interactive video ready for mobile learning or social micro-learning (TikTok, YouTube Shorts).
-- If a compilation error occurs, the harness runs a **Self-Correction Feedback Loop**, feeding the compiler traceback back to Gemma to fix the code automatically!
+STEM education thrives on visual intuition (how an algorithm partitions an array, how geometric proofs work, or how RC circuits charge). However:
+1. **Manual Coding is Painstaking:** Crafting 3Blue1Brown-style programmatic animations using Python's `manim` library takes hours of manual coordinate math and debugging.
+2. **Generative Video AI Hallucinates:** Diffusion models (Sora, Runway, Pika) generate blurry pixels, distort geometry, and invent fake mathematical formulas.
+3. **Mobile Micro-Learning Demand:** Students consume content vertically on phones (Shorts, Reels, TikTok) and need crystal-clear concept mastery in 15–25 seconds.
+
+**Stemations solves this:** Guided by an open-standard **Agent Skill**, **Gemma 4** acts as both educator and software engineer. It writes deterministic, verifiable Python Manim code, coordinates neural narration, compiles the scene in a sandboxed harness, and self-heals if any compilation errors occur.
 
 ---
 
@@ -48,189 +40,178 @@ STEM education thrives on visual intuition (e.g., how algorithms sort arrays, ho
 
 Stemations is purpose-built to satisfy and compete in **both** prize categories at **Hacktoberfest Hack Day Faisalabad**:
 
-| Prize Category | Requirement | How Stemations Qualifies |
+| Prize Category | Key Requirements | How Stemations Qualifies |
 |---|---|---|
-| **Best Open-Source AI Project** | • Open-source repository with OSI-approved license<br>• Uses open-weight AI model<br>• Complies with Agent Skill Open Standard<br>• Meaningful Model Harness implementation | • Licensed under the permissive **MIT License**.<br>• Powered by Google's open-weight **Gemma 4** model.<br>• Includes a compliant **Agent Skill** (`skills/stem-animator/SKILL.md`).<br>• Implements an original, lightweight **Model Harness** managing context, tools, and error-recovery. |
-| **Best Use of Gemma 4** | • Gemma 4 called via Google GenAI API (`google-genai`)<br>• Gemma is central to the project, not a bolt-on | • Gemma 4 is the core planner, code synthesizer, compiler critic, and curriculum curator that powers the entire creation loop. |
+| **Best Open-Source AI Project** | • Open-source repository with OSI-approved license<br>• Uses open-weight AI model<br>• Complies with Agent Skill Open Standard<br>• Meaningful Model Harness implementation | • Licensed under the permissive **MIT License**.<br>• Powered by Google's open-weight **Gemma 4** (`gemma-4-26b-a4b-it`).<br>• Implements a compliant **Agent Skill** (`skills/stem-animator/SKILL.md`).<br>• Custom, transparent **Model Harness** managing context, sandboxed tools, and self-healing error recovery. |
+| **Best Use of Gemma 4** | • Gemma 4 called via Google GenAI SDK (`google-genai`)<br>• Gemma is central to the project, not a bolt-on | • Gemma 4 is the **core reasoning engine**: acting as the lesson planner, geometric code author, compiler critic, and sequential curriculum curator. |
 
 ---
 
-## 🏗️ System Architecture & Flow
-
-The architecture is intentionally designed to be **simple, modular, and failure-proof**:
+## 🏗️ How It Works (System Architecture)
 
 ```mermaid
 flowchart TD
-    User(["👤 User Prompt\n(e.g., 'Binary Search')"]) --> Harness["⚡ Stemations Model Harness\n(harness/agent.py)"]
+    User(["👤 User Prompt\n(e.g., 'Binary Search')"]) --> Harness["⚡ Stemations Model Harness\n(harness/pipeline.py)"]
     
-    Skill["📚 Agent Skill Open Standard\n(skills/stem-animator/SKILL.md)\n• Vertical 9:16 layout constraints\n• Verified Manim primitives\n• Timing & color rules"] -->|Ingest Context| Harness
+    Skill["📚 Agent Skill Open Standard\n(skills/stem-animator/SKILL.md)\n• 4-Beat Lesson Structure\n• Vertical 9:16 Safe Zones\n• Zero-LaTeX Text Primitives"] -->|Context Ingestion| Harness
     
-    Harness <-->|Generate Code, Script & Next Topics| Gemma["🧠 Gemma 4\n(via google-genai SDK)"]
+    Harness <-->|Generate Code, Script & Next Topics| Gemma["🧠 Gemma 4 / Gemini API\n(google-genai SDK)"]
     
-    subgraph Execution Tools
-        Harness --> ToolManim["🎬 tool_render_manim\n(Subprocess code execution)"]
+    subgraph Sandboxed Execution Tools
+        Harness --> ToolManim["🎬 tool_render_manim\n(Subprocess code compile)"]
         Harness --> ToolTTS["🎙️ tool_generate_tts\n(edge-tts neural voiceover)"]
-        Harness --> ToolCompose["🎞️ tool_compose_video\n(Audio/video sync & stitch)"]
+        Harness --> ToolCompose["🎞️ tool_compose_video\n(9:16 Audio/Video stitch & sync)"]
     end
     
     ToolManim -.->|On Syntax / Runtime Error| SelfHeal["🔁 Self-Healing Loop\n(Sends compiler error to Gemma to fix)"]
     SelfHeal -.-> Harness
     
     ToolCompose --> Final["📱 Final 9:16 Video + Next Topics"]
-    Final --> UI["🖥️ Streamlit Web App\n• Live Agent Execution Tracing\n• Interactive Video Player\n• Clickable Next Topic Pathways"]
+    Final --> UI["🖥️ Streamlit Interactive UI\n• Real-Time Agent Trace Logger\n• 9:16 Video Player & Downloader\n• Clickable Follow-up Curriculum"]
 ```
-
-### Flow Breakdown:
-1. **User Input:** Enter any STEM concept or click a quick-select starter chip.
-2. **Skill Context Loading:** The harness reads `skills/stem-animator/SKILL.md` to load the exact rules, vertical bounding boxes, and Manim primitives.
-3. **Gemma 4 Generation:** Gemma generates a structured plan containing:
-   - A 25–35 word pedagogical explanation.
-   - Self-contained, executable Manim Community Edition code.
-   - 3 recommended next sequential topics.
-4. **Tool Execution:**
-   - `tool_render_manim`: Executes the code in a sandboxed subprocess.
-   - `tool_generate_tts`: Generates crisp neural voiceover using `edge-tts`.
-   - `tool_compose_video`: Merges the animation and narration into a 9:16 MP4.
-5. **Self-Healing Guardrail:** If Manim returns a non-zero exit code or syntax traceback, the harness captures stderr and prompts Gemma to fix it.
-6. **Delivery & Learning Pathways:** The Streamlit dashboard plays the finished video and presents clickable chips for the next topics, creating an endless learning journey!
 
 ---
 
 ## ✨ Key Features
 
-- **🎯 Programmatic Precision:** Mathematical graphs, geometric vectors, and data structure steps rendered accurately with Manim (no blurry AI pixels).
-- **📱 9:16 Short-Form Ready:** Formatted specifically for vertical video viewing on smartphones, reels, and shorts.
-- **🧠 Driven by Gemma 4:** Gemma 4 reasons about the visual layout and pedagogy behind the prompt.
-- **🔁 Self-Correcting Execution:** Automatically fixes code errors without user intervention.
-- **🎙️ Zero-Cost Neural Voiceover:** High-quality narration synthesized with `edge-tts` (free, fast, no external paid API key needed).
-- **🗺️ Adaptive Learning Pathways:** Never leaves the student stranded—recommends 3 intelligent follow-up concepts after every video.
-- **👁️ Live Agent Thought Tracer:** The UI displays real-time execution logs showing the agent reading the skill, invoking tools, and rendering assets.
+- **🎯 Deterministic Precision:** Mathematical diagrams, geometric vectors, and algorithm states rendered with Manim CE—no blurry or hallucinated pixels.
+- **📱 Native 9:16 Mobile Format:** Specifically calibrated for vertical viewing on smartphones, Reels, and YouTube Shorts (`1080x1920`, safe bounds `x ∈ [-3.6, 3.6]`, `y ∈ [-6.0, 6.0]`).
+- **🔁 Self-Correcting Execution:** If the compiler encounters a syntax or attribute error, the harness captures stderr and prompts Gemma to repair the code automatically.
+- **🎙️ Zero-Cost Neural Voiceover:** High-fidelity speech synthesized in ~2 seconds using `edge-tts` (fast, natural, zero external API costs).
+- **🗺️ Adaptive Curriculum Pathways:** Recommends 3 intelligent sequential topics after every video, creating an endless learning path.
+- **👁️ Real-Time Agent Trace:** Watch the live thought process as the agent loads the skill, invokes tools, and renders assets step-by-step.
 
 ---
 
-## 🧩 Agent Skill & Model Harness
+## 🧩 Agent Skill Open Standard Compliance
 
-### 1. The Agent Skill (`skills/stem-animator/`)
-Adheres to the **Agent Skill Open Standard**:
-- **Metadata (`SKILL.md` frontmatter):** Standardized YAML configuration (`name`, `description`, `version`, `license`, `compatibility`).
-- **Domain Constraints:** Enforces 9:16 canvas boundaries (`width=9.0`, `height=16.0`), safe margins, and high-contrast color palettes for mobile screens.
-- **Curated Primitives:** Restricts model output to robust Manim CE elements (`Create`, `Transform`, `FadeIn`, `MathTex`, `VGroup`, `Square`, `Arrow`).
-
-### 2. The Model Harness (`harness/`)
-A lightweight, transparent orchestration layer:
-- **`context.py`:** Discovers and injects the `SKILL.md` rules into the LLM system prompt.
-- **`gemma_client.py`:** Standardized client wrapper around Google's `google-genai` SDK using `gemma-4-26b-a4b-it`.
-- **`agent.py`:** Coordinates the reasoning, tool execution, and self-healing retry loop.
-- **`tools/`:** Modular execution tools (`manim_tool`, `audio_tool`, `compose_tool`).
+Located at `skills/stem-animator/SKILL.md`:
+- **Standardized Frontmatter:** YAML specification containing `name`, `description`, `version`, `license`, and `compatibility`.
+- **The 4-Beat Lesson Structure:**
+  - *Beat 1 (Hook & Title):* Top header at `y ≈ 6.0` with intuitive 1-line concept definition.
+  - *Beat 2 (Visual Model):* Central diagram or array setup (`y ≈ 0.5 to 2.2`).
+  - *Beat 3 (The "Aha!" Mechanism):* Dynamic visual action (pointers slide, elements swap, squares sum, curves trace).
+  - *Beat 4 (Summary Takeaway):* Bottom card at `y ≈ -4.2` with formula or big-O complexity + `self.wait(2)`.
+- **Zero-LaTeX Dependency:** Enforces `Text()` with unicode math symbols (`²`, `√`, `θ`, `π`, `→`, `≤`) so animations execute on any system without needing a 4GB LaTeX installation.
 
 ---
 
-## 📁 Project Structure
+## 📁 Repository Structure
 
 ```
 stemations/
-├── .env.example             # Example environment file with GEMINI_API_KEY
-├── .gitignore               # Protects API keys, logs, and media caches
-├── LICENSE                  # MIT License
-├── README.md                # Comprehensive documentation
-├── requirements.txt         # All Python dependencies
-├── app.py                   # Streamlit web dashboard & agent visualizer
+├── app.py                         # Streamlit web dashboard & agent visualizer
+├── requirements.txt               # Project dependencies
+├── verify_setup.py                # Pre-flight diagnostic check script
+├── LICENSE                        # MIT License
+├── README.md                      # Primary project documentation
+├── ARCHITECTURE_AND_PRESENTATION.md # Architecture deep dive & 3-minute pitch playbook
 │
 ├── skills/
 │   └── stem-animator/
-│       ├── SKILL.md         # Compliant Agent Skill specification
-│       └── templates/       # Pre-verified Manim scene templates
+│       ├── SKILL.md               # Compliant Agent Skill specification
+│       └── templates/             # Reference Manim scene templates
+│           ├── algorithm_template.py
+│           └── math_template.py
 │
-├── harness/
+├── harness/                       # Model harness & agent orchestration
 │   ├── __init__.py
-│   ├── context.py           # Loads Agent Skill & builds system prompt
-│   ├── gemma_client.py      # Google GenAI Gemma 4 connection
-│   ├── agent.py             # ReAct reasoning loop & tool orchestrator
-│   └── tools/
+│   ├── agent.py                   # Agent facade
+│   ├── pipeline.py                # 5-stage execution pipeline
+│   ├── plan_builder.py            # Plan generator & template fallback
+│   ├── gemma_client.py            # Google GenAI Gemma 4 connection & Self-Healing
+│   ├── context.py                 # Agent Skill loader & system prompt builder
+│   ├── models.py                  # Model attempt order and fallback cascades
+│   ├── health.py                  # Health check logic
+│   ├── demo_cache.py              # Offline demo cache retriever
+│   └── tools/                     # Modular execution tools
 │       ├── __init__.py
-│       ├── manim_tool.py    # Sandboxed Manim code execution
-│       ├── audio_tool.py    # edge-tts neural voice generation
-│       └── compose_tool.py  # Video & audio composition
+│       ├── manim_tool.py          # Sandboxed Manim code execution
+│       ├── audio_tool.py          # edge-tts neural voice generation
+│       └── compose_tool.py        # Video & audio composition
 │
-└── demo_cache/              # Offline backup videos for fail-safe demo
-    ├── binary_search.mp4
-    └── pythagoras.mp4
+├── demo_cache/                    # Fail-safe pre-rendered video assets
+│   ├── manifest.json              # Demo cache catalog
+│   ├── binary_search.mp4
+│   └── pythagoras.mp4
+│
+└── scripts/
+    └── seed_demo_cache.py         # Script to pre-generate demo cache assets
 ```
 
 ---
 
-## 🛠️ Getting Started
+## 🛠️ Quickstart Guide
 
-### Prerequisites
-1. **Python 3.10+** (Tested on Python 3.12)
-2. **Git**
-3. **FFmpeg** (Required by Manim & MoviePy for rendering):
-   - **Windows:**
-     ```powershell
-     winget install Gyan.FFmpeg
-     ```
-   - **macOS:**
-     ```bash
-     brew install ffmpeg
-     ```
-   - **Linux (Ubuntu/Debian):**
-     ```bash
-     sudo apt update && sudo apt install -y ffmpeg
-     ```
+### 1. Prerequisites
+- **Python 3.10+** (Tested on Python 3.12)
+- **FFmpeg** (Required by Manim & MoviePy):
+  - *Windows:* `winget install Gyan.FFmpeg`
+  - *macOS:* `brew install ffmpeg`
+  - *Linux:* `sudo apt update && sudo apt install -y ffmpeg`
 
-### Installation
+### 2. Installation
+```bash
+# Clone the repository
+git clone https://github.com/Haider-Ali7/stemations.git
+cd stemations
 
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/<your-username>/stemations.git
-   cd stemations
-   ```
+# Create and activate virtual environment
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
 
-2. **Create a Virtual Environment:**
-   ```bash
-   python -m venv venv
-   # On Windows:
-   .\venv\Scripts\activate
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
+# Install dependencies
+pip install -r requirements.txt
+```
 
-3. **Install Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 3. Configure API Key
+Create a `.env` file in the root directory:
+```ini
+GEMINI_API_KEY=your_gemini_api_key_from_google_ai_studio
+```
 
-4. **Configure your API Key:**
-   Copy `.env.example` to `.env` and insert your Gemini API Key:
-   ```bash
-   cp .env.example .env
-   ```
-   Edit `.env`:
-   ```ini
-   GEMINI_API_KEY="your_google_ai_studio_key_here"
-   ```
+### 4. Run Setup Verification
+```bash
+python verify_setup.py
+```
+*Outputs `[OK]` for API Key, Streamlit, Manim Community, edge-tts, and MoviePy/FFmpeg.*
+
+### 5. Launch the Application
+```bash
+streamlit run app.py
+```
+Open `http://localhost:8501` in your browser.
 
 ---
 
-## 🎮 How to Run the Demo
+## 📼 Fail-Safe Venue Backup Mode
 
-1. **Run the Streamlit Dashboard:**
-   ```bash
-   streamlit run app.py
-   ```
-2. **Use the Application:**
-   - Open your browser at `http://localhost:8501`.
-   - Type a topic (e.g., *"Bubble Sort algorithm"*) or pick a sample chip.
-   - Watch the **Agent Trace** execute: Skill loaded $\rightarrow$ Code generated $\rightarrow$ Scene rendered $\rightarrow$ Narration voiced $\rightarrow$ Video stitched.
-   - Watch the resulting 9:16 vertical animation and click any recommended follow-up topic!
-
-
-## 📜 License & Attributions
-
-- **Code License:** This project is licensed under the [MIT License](LICENSE).
-- **Model License:** Powered by **Gemma 4** (`gemma-4-26b-a4b-it`) released by Google under the [Apache 2.0 License](https://ai.google.dev/gemma/terms).
-- **Libraries:** Built with [Manim Community Edition](https://www.manim.community/) and [Streamlit](https://streamlit.io/).
+To protect against unreliable conference Wi-Fi or API rate limits during live hackathon judging:
+- The app includes a pre-rendered **Venue Backup Demo** section in the sidebar.
+- Click **"▶ Show backup video"** to instantly stream pre-rendered animations of **Binary Search** and the **Pythagorean Theorem** without making any external network calls.
 
 ---
 
+## 📖 Documentation & Presentation Playbook
 
+For a comprehensive breakdown of the code and the exact 3-minute pitch to deliver to judges, refer to:
+👉 **[ARCHITECTURE_AND_PRESENTATION.md](ARCHITECTURE_AND_PRESENTATION.md)**:
+- Line-by-line component walkthrough
+- Step-by-step data flow lifecycle
+- **Word-for-word 3-minute hackathon pitch script**
+- Likely judge questions with winning answers
+
+---
+
+## 👥 Team & Acknowledgments
+
+**Hacktoberfest Hack Day Faisalabad 2026**  
+*Project ID:* NTU 27-FYP-217  
+*Team:* Maha Ather, Amina Asif, Haider Ali
+
+- **Model:** Powered by **Gemma 4** (`gemma-4-26b-a4b-it`) released by Google under the Apache 2.0 License.
+- **Engine:** Built with [Manim Community Edition](https://www.manim.community/) and [Streamlit](https://streamlit.io/).
+- **License:** Open-source under the [MIT License](LICENSE).

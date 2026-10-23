@@ -37,7 +37,9 @@ ENV/
 # Manim output media
 media/
 _output/
+demo_cache/_build/
 *.mp4
+!demo_cache/*.mp4
 *.mp3
 *.wav
 *.png
