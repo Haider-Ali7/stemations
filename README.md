@@ -206,11 +206,6 @@ For a comprehensive breakdown of the code and the exact 3-minute pitch to delive
 
 ---
 
-## 👥 Team & Acknowledgments
-
-**Hacktoberfest Hack Day Faisalabad 2026**  
-*Project ID:* NTU 27-FYP-217  
-*Team:* Maha Ather, Amina Asif, Haider Ali
 
 - **Model:** Powered by **Gemma 4** (`gemma-4-26b-a4b-it`) released by Google under the Apache 2.0 License.
 - **Engine:** Built with [Manim Community Edition](https://www.manim.community/) and [Streamlit](https://streamlit.io/).
