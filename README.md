@@ -20,9 +20,8 @@
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
 - [How to Run the Demo](#-how-to-run-the-demo)
-- [Roadmap (FYP Evolution)](#-roadmap-fyp-evolution)
 - [License & Attributions](#-license--attributions)
-- [Team](#-team)
+
 
 ---
 
@@ -225,19 +224,6 @@ stemations/
    - Watch the **Agent Trace** execute: Skill loaded $\rightarrow$ Code generated $\rightarrow$ Scene rendered $\rightarrow$ Narration voiced $\rightarrow$ Video stitched.
    - Watch the resulting 9:16 vertical animation and click any recommended follow-up topic!
 
----
-
-## 🗺️ Roadmap (FYP Evolution)
-
-Stemations was originated as our **Final Year Project (FYP)** at the **National Textile University (NTU)** under group **27-FYP-217**, supervised by **Sir Shahid**.
-
-Following this Hackathon MVP, our upcoming FYP milestones include:
-- [ ] **Multi-Modal Vision Critic:** Using Vision-Language Models (VLMs) to visually inspect rendered frames for element overlap or contrast issues.
-- [ ] **RAG over Manim Documentation:** Local vector retrieval (pgvector) over community Manim recipes.
-- [ ] **1-Click Social Publishing:** Integration with YouTube Data API (Shorts) and TikTok API.
-- [ ] **Cross-Platform Mobile App:** Flutter companion client for students on iOS and Android.
-
----
 
 ## 📜 License & Attributions
 
@@ -247,10 +233,4 @@ Following this Hackathon MVP, our upcoming FYP milestones include:
 
 ---
 
-## 👥 Team
 
-**Final Year Project Group: 27-FYP-217 (BS-Software Engineering, NTU)**
-- **Maha Ather** (23-NTU-CS-1170)
-- **Amina Asif** (23-NTU-CS-1136)
-- **Haider Ali** (23-NTU-CS-1164)
-- **Project Supervisor:** Sir Shahid
