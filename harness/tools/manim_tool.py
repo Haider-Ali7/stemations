@@ -73,11 +73,23 @@ def render_manim_code(code: str, output_dir: str = "_output/scenes") -> Dict[str
                 "stderr": stderr
             }
             
-        # Search for the rendered .mp4 file
-        rendered_videos = list(media_dir.glob(f"**/{scene_class_name}.mp4"))
+        # Search specifically within THIS scene's unique output directory
+        scene_media_dir = media_dir / "videos" / f"scene_{unique_id}"
+        rendered_videos = []
+        if scene_media_dir.exists():
+            rendered_videos = sorted(
+                list(scene_media_dir.glob(f"**/{scene_class_name}.mp4")) or list(scene_media_dir.glob("**/*.mp4")),
+                key=os.path.getmtime,
+            )
+
         if not rendered_videos:
-            # Fallback search for any mp4 created
-            rendered_videos = list(media_dir.glob("**/*.mp4"))
+            # Fallback: search media_dir sorted by newest modification time
+            all_videos = sorted(
+                list(media_dir.glob(f"**/{scene_class_name}.mp4")) or list(media_dir.glob("**/*.mp4")),
+                key=os.path.getmtime,
+            )
+            if all_videos:
+                rendered_videos = [all_videos[-1]]
             
         if rendered_videos:
             return {
