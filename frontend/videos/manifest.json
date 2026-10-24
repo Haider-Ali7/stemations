@@ -1,0 +1,30 @@
+{
+  "demos": [
+    {
+      "id": "binary_search",
+      "title": "Binary Search in an Array",
+      "keywords": [
+        "binary",
+        "search",
+        "array"
+      ],
+      "video_file": "binary_search.mp4",
+      "script_file": "binary_search_script.txt",
+      "code_file": "binary_search_scene.py",
+      "next_topics": []
+    },
+    {
+      "id": "pythagoras",
+      "title": "Pythagorean Theorem Geometric Proof",
+      "keywords": [
+        "pythag",
+        "theorem",
+        "geometry"
+      ],
+      "video_file": "pythagoras.mp4",
+      "script_file": "pythagoras_script.txt",
+      "code_file": "pythagoras_scene.py",
+      "next_topics": []
+    }
+  ]
+}

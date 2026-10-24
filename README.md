@@ -226,14 +226,13 @@ Open your browser to:
 
 ## Production Deployment
 
-### Free 1-Click Cloud Deployment (Render.com)
-The repository includes a ready-to-use [`render.yaml`](render.yaml) blueprint:
+### Free Instant Deployment on Netlify
+The repository is pre-configured with [`netlify.toml`](netlify.toml) for zero-setup deployment:
 1. Push your repository to GitHub.
-2. Sign up / Log into [Render.com](https://render.com).
-3. Click **New +** -> **Blueprint**, and select your GitHub repository.
-4. Render automatically detects `render.yaml` and sets up the Docker Web Service on the free tier.
-5. In the Render service settings, add your `GEMINI_API_KEY` under **Environment Variables**.
-6. Render deploys your service with full Manim, FFmpeg, and neural audio capabilities!
+2. Sign up or log into [Netlify](https://app.netlify.com/).
+3. Click **Add new site** → **Import an existing project** → **GitHub**.
+4. Select `stemations`. Netlify will automatically detect [`netlify.toml`](netlify.toml) and publish directory `frontend`.
+5. Click **Deploy stemations**. Your site goes live across Netlify's global edge network in seconds!
 
 ### Docker Deployment (Local or VPS)
 Build the container image:
