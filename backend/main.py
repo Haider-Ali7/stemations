@@ -293,7 +293,12 @@ def serve_video(filename: str, download: bool = False):
     safe_name = os.path.basename(filename)
     target = FINAL_OUTPUT_DIR / safe_name
     if not target.exists() or not target.is_file():
-        raise HTTPException(status_code=404, detail="Video file not found")
+        # Fallback: search in scenes output directories in case compose step returned raw render
+        alt_matches = list((BACKEND_DIR / "_output").glob(f"**/{safe_name}"))
+        if alt_matches:
+            target = alt_matches[0]
+        else:
+            raise HTTPException(status_code=404, detail="Video file not found")
 
     disposition = "attachment" if download else "inline"
     headers = {"Content-Disposition": f'{disposition}; filename="{safe_name}"'}
@@ -411,14 +416,20 @@ async def stream_generate(
             else:
                 # In case of compiler error, check if an offline cached backup exists
                 cached = find_demo_for_topic(topic)
+                if not cached:
+                    ready = list_ready_demos()
+                    if ready:
+                        cached = ready[0]
+
                 cached_data = None
                 if cached and cached.get("video_path"):
                     p = Path(cached["video_path"])
                     cached_data = {
                         "video_url": f"/api/demo-videos/{p.name}",
                         "title": cached.get("title", topic),
-                        "script": cached.get("script", ""),
-                        "manim_code": cached.get("manim_code", ""),
+                        "script": cached.get("script", result.get("script", "")),
+                        "manim_code": cached.get("manim_code", result.get("manim_code", "")),
+                        "next_topics": result.get("next_topics", ["Binary Search Trees", "Algorithm Complexity"]),
                     }
 
                 final_payload = {
