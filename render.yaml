@@ -1,0 +1,17 @@
+# Render.com Deployment Blueprint
+# https://docs.render.com/infrastructure-as-code
+services:
+  - type: web
+    name: stemations
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false  # Paste your Gemini API key in Render Dashboard
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: MAX_OUTPUT_AGE_HOURS
+        value: "6"
+    healthCheckPath: /api/health
