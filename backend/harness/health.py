@@ -40,10 +40,11 @@ def run_health_check(test_api: bool = True) -> HealthReport:
     )
 
     try:
-        import streamlit  # noqa: F401
-        report.add("streamlit", True)
+        import fastapi  # noqa: F401
+        import uvicorn  # noqa: F401
+        report.add("FastAPI & Uvicorn Engine", True)
     except ImportError:
-        report.add("streamlit", False, "pip install -r requirements.txt")
+        report.add("FastAPI & Uvicorn Engine", False, "pip install -r requirements.txt")
 
     try:
         proc = subprocess.run(
@@ -78,7 +79,10 @@ def run_health_check(test_api: bool = True) -> HealthReport:
     if test_api and key and key != "your_gemini_api_key_here":
         try:
             from google import genai
-            from harness.models import DEFAULT_MODEL
+            try:
+                from backend.harness.models import DEFAULT_MODEL
+            except ImportError:
+                from harness.models import DEFAULT_MODEL
 
             client = genai.Client(api_key=key)
             response = client.models.generate_content(
@@ -90,3 +94,10 @@ def run_health_check(test_api: bool = True) -> HealthReport:
             report.add("Google GenAI", False, str(exc)[:120])
 
     return report
+
+
+if __name__ == "__main__":
+    rep = run_health_check()
+    for line in rep.messages:
+        print(line)
+    sys.exit(0 if rep.ok else 1)

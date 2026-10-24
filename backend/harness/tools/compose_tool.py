@@ -23,7 +23,9 @@ def compose_video_and_audio(
             "error": Optional[str]
         }
     """
-    out_dir = Path(output_dir).resolve()
+    backend_dir = Path(__file__).resolve().parent.parent.parent
+    p = Path(output_dir)
+    out_dir = p if p.is_absolute() else (backend_dir / p).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     
     unique_id = uuid.uuid4().hex[:8]

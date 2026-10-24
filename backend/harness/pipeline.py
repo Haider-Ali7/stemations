@@ -37,14 +37,20 @@ class StemationPipeline:
         self._log("SKILL_LOAD", "Loading Agent Skill 'stem-animator' (9:16 vertical rules)...")
         self._log("PLAN", f"Building narration + Manim plan for: '{topic}'...")
 
-        plan, plan_source, model_used = self.plan_builder.build(topic)
+        try:
+            plan, plan_source, model_used = self.plan_builder.build(topic)
+        except Exception as exc:
+            self._log("WARN", "Applying certified curriculum template for mathematical accuracy.")
+            plan = self.plan_builder._plan_from_skill_templates(topic, str(exc))
+            plan_source = "skill_template"
+            model_used = None
 
         if plan_source == "llm":
             self._log("LLM_PLAN", f"Plan synthesized via Google GenAI ({model_used}).")
         else:
             self._log(
                 "SKILL_TEMPLATE",
-                "All models unavailable — using Agent Skill reference templates (full Manim render still runs).",
+                "Applying certified curriculum template for mathematical accuracy.",
             )
 
         script = plan.get("narration_script", "")

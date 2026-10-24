@@ -47,13 +47,55 @@ class GemmaClient:
                 lines = lines[:-1]
             text = "\n".join(lines).strip()
 
+        # 1. Try standard JSON parse with strict=False
         try:
-            return json.loads(text)
+            return json.loads(text, strict=False)
         except json.JSONDecodeError:
-            match = re.search(r"\{.*\}", text, re.DOTALL)
-            if match:
-                return json.loads(match.group(0))
-            raise ValueError(f"Failed to parse valid JSON from Gemma response:\n{text}")
+            pass
+
+        # 2. Extract outermost JSON object if model wrapped in text
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        candidate = match.group(0) if match else text
+
+        try:
+            return json.loads(candidate, strict=False)
+        except json.JSONDecodeError:
+            pass
+
+        # 3. Sanitize invalid escape sequences (e.g. \theta, \s, \d, \^, LaTeX formulas)
+        # Valid JSON escapes: \", \\, \/, \b, \f, \n, \r, \t, \uXXXX
+        sanitized = re.sub(r'\\(?![/"\\bfnrtu]|u[0-9a-fA-F]{4})', r'\\\\', candidate)
+        try:
+            return json.loads(sanitized, strict=False)
+        except json.JSONDecodeError:
+            pass
+
+        # 4. Fallback: Extract fields directly with regex if JSON formatting was irregular
+        extracted: Dict[str, Any] = {}
+        script_match = re.search(r'"narration_script"\s*:\s*"((?:\\.|[^"\\])*)"', text, re.DOTALL)
+        if script_match:
+            try:
+                extracted["narration_script"] = bytes(script_match.group(1), "utf-8").decode("unicode_escape")
+            except Exception:
+                extracted["narration_script"] = script_match.group(1)
+
+        code_match = re.search(r'"manim_code"\s*:\s*"((?:\\.|[^"\\])*)"', text, re.DOTALL)
+        if code_match:
+            try:
+                extracted["manim_code"] = bytes(code_match.group(1), "utf-8").decode("unicode_escape")
+            except Exception:
+                extracted["manim_code"] = code_match.group(1)
+
+        topics_match = re.search(r'"next_topics"\s*:\s*\[(.*?)\]', text, re.DOTALL)
+        if topics_match:
+            extracted["next_topics"] = re.findall(r'"([^"]+)"', topics_match.group(1))
+        else:
+            extracted["next_topics"] = []
+
+        if extracted.get("manim_code"):
+            return extracted
+
+        raise ValueError(f"Failed to parse valid JSON from Gemma response:\n{text[:250]}")
 
     def _generate_text(self, models: List[str], contents: str) -> Tuple[str, str]:
         last_error: Optional[Exception] = None

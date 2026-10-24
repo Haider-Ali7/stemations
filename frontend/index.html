@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stemations — AI STEM Video Generator</title>
+  <meta name="description" content="Generate mathematically accurate STEM animations with voiceover in seconds. Powered by Manim and Google Gemini.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Stemations — AI STEM Video Generator">
+  <meta property="og:description" content="Turn any STEM concept into an accurate vertical animation with voiceover in seconds.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://stemations.onrender.com">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Stemations — AI STEM Video Generator">
+  <meta name="twitter:description" content="Turn any STEM concept into an accurate vertical animation with voiceover in seconds.">
+
+  <!-- Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF6B1A'/%3E%3Cpath d='M12 8v16l12-8z' fill='white'/%3E%3C/svg%3E">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orange: {
+              DEFAULT: '#FF6B1A',
+              hover: '#E85A0C',
+              light: '#FFE4D1',
+            },
+            soft: '#FFF7F0',
+            border: '#EDE6DF',
+            heading: '#1A1A1A',
+            muted: '#6B6B6B',
+            charcoal: '#14161A',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-white text-muted min-h-screen flex flex-col antialiased">
+
+  <!-- ========================================================================= -->
+  <!-- NAVIGATION HEADER                                                         -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-border py-3.5 px-4 lg:px-8">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 group">
+        <div class="w-8 h-8 rounded-xl bg-orange flex items-center justify-center text-white shadow-sm">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </div>
+        <span class="font-extrabold text-lg tracking-tight text-heading">
+          Stemations<span class="text-orange">.</span>
+        </span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-muted">
+        <a href="#hero" class="hover:text-heading transition-colors">Studio</a>
+        <a href="#examples" class="hover:text-heading transition-colors">Examples</a>
+        <a href="#how-it-works" class="hover:text-heading transition-colors">How It Works</a>
+      </nav>
+
+      <!-- Action Items -->
+      <div class="flex items-center gap-3">
+        <!-- Model Selection Dropdown -->
+        <div class="relative hidden sm:block">
+          <select id="model-select" class="input-minimal text-xs font-medium text-heading rounded-lg px-2.5 py-1.5 pr-7 appearance-none cursor-pointer">
+            <option value="gemini-3.5-flash-lite" selected>Gemini 3.5 Flash Lite</option>
+            <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+            <option value="gemma-4-26b-a4b-it">Gemma 4 26B</option>
+            <option value="gemma-4-31b-it">Gemma 4 31B</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Status Button -->
+        <button id="btn-diagnostic-open" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-soft border border-border text-heading hover:border-orange transition-all">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="diagnostic-status-text">Engine Ready</span>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button id="btn-mobile-menu" class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-soft hover:border-orange transition-all" aria-label="Open menu">
+          <svg class="w-5 h-5 text-heading" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Slide-In Menu -->
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden transition-opacity duration-300 opacity-0"></div>
+  <div id="mobile-menu-drawer" class="fixed top-0 right-0 h-full w-64 bg-white border-l border-border z-50 shadow-2xl transform translate-x-full transition-transform duration-300">
+    <div class="flex items-center justify-between p-4 border-b border-border">
+      <span class="font-bold text-heading text-sm">Menu</span>
+      <button id="btn-mobile-menu-close" class="text-muted hover:text-heading p-1">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <nav class="flex flex-col p-4 gap-3 text-sm font-medium text-muted">
+      <a href="#hero" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-soft hover:text-heading transition-all">Studio</a>
+      <a href="#examples" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-soft hover:text-heading transition-all">Examples</a>
+      <a href="#how-it-works" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-soft hover:text-heading transition-all">How It Works</a>
+      <hr class="border-border my-2">
+      <!-- Mobile model selector -->
+      <div class="relative">
+        <label class="text-xs text-muted mb-1 block">AI Model</label>
+        <select id="model-select-mobile" class="input-minimal w-full text-xs font-medium text-heading rounded-lg px-2.5 py-2 appearance-none cursor-pointer">
+          <option value="gemini-3.5-flash-lite" selected>Gemini 3.5 Flash Lite</option>
+          <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+          <option value="gemma-4-26b-a4b-it">Gemma 4 26B</option>
+          <option value="gemma-4-31b-it">Gemma 4 31B</option>
+        </select>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 1. HERO SECTION                                                           -->
+  <!-- ========================================================================= -->
+  <section id="hero" class="py-14 sm:py-20 px-4 lg:px-8 border-b border-border">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+        
+        <!-- Left Column: Short Headline & Generator Form -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-peach text-xs font-semibold">
+            AI Video Generator
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-heading tracking-tight leading-tight">
+            Generate STEM Videos in Seconds
+          </h1>
+
+          <p class="text-base text-muted max-w-lg">
+            Turn any concept into an accurate vertical animation with voiceover.
+          </p>
+
+          <!-- Input Box with Orange Button -->
+          <form id="generation-form" class="card-soft p-2.5 sm:p-3 flex flex-col sm:flex-row gap-2.5 shadow-sm">
+            <input 
+              id="topic-input" 
+              type="text" 
+              placeholder="e.g. Binary Search in an Array"
+              class="input-minimal flex-grow px-4 py-3 text-sm sm:text-base text-heading placeholder:text-muted/60"
+              value="Binary Search in an Array"
+              required
+            />
+            <button 
+              id="btn-generate"
+              type="submit" 
+              class="btn-orange px-6 py-3 text-sm sm:text-base flex items-center justify-center gap-2 whitespace-nowrap"
+            >
+              <svg id="generate-icon" class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <svg id="generate-spinner" class="animate-spin w-4 h-4 text-white hidden" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span id="generate-btn-label">Generate Video</span>
+            </button>
+          </form>
+
+          <!-- Quick Prompts Chips -->
+          <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+            <span class="text-muted font-medium mr-1">Popular:</span>
+            <button type="button" class="chip-btn px-3 py-1.5" data-topic="Binary Search in an Array">Binary Search</button>
+            <button type="button" class="chip-btn px-3 py-1.5" data-topic="Pythagorean Theorem Geometric Proof">Pythagoras</button>
+            <button type="button" class="chip-btn px-3 py-1.5" data-topic="Bubble Sort Algorithm">Bubble Sort</button>
+            <button type="button" class="chip-btn px-3 py-1.5" data-topic="Capacitor RC Circuit Charging">RC Circuit</button>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Hero Sample Video Preview -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-full max-w-[280px]">
+            <div class="video-frame-container">
+              <video id="hero-sample-video" autoplay loop muted playsinline poster="">
+                <source src="/api/demo-videos/binary_search.mp4" type="video/mp4">
+              </video>
+              <!-- Fallback shown if video fails to load -->
+              <div id="hero-video-fallback" class="hidden absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                <div class="w-16 h-16 rounded-2xl bg-orange/20 flex items-center justify-center mb-4">
+                  <svg class="w-8 h-8 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <p class="text-white/80 text-xs font-medium">Generate your first video above</p>
+              </div>
+            </div>
+            <div class="absolute -bottom-3 -right-3 bg-white px-3.5 py-1.5 rounded-full border border-border shadow-md text-xs font-semibold text-heading flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-orange"></span>
+              9:16 Vertical Preview
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- LIVE ORCHESTRATION CONSOLE (Active during generation)                     -->
+  <!-- ========================================================================= -->
+  <section id="orchestration-section" class="py-10 px-4 lg:px-8 border-b border-border bg-soft hidden transition-all">
+    <div class="max-w-4xl mx-auto">
+      
+      <div class="card-white p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-orange animate-pulse"></span>
+            <h2 class="text-sm font-bold text-heading">Generating Lesson Video</h2>
+          </div>
+          <span id="stage-badge" class="px-2.5 py-1 rounded-full badge-peach text-xs">
+            Initializing
+          </span>
+        </div>
+
+        <!-- 5 Steps Tracker -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4 text-center text-xs">
+          <div id="step-col-1" class="p-2 rounded-xl border border-border bg-soft text-muted">1. Plan</div>
+          <div id="step-col-2" class="p-2 rounded-xl border border-border bg-soft text-muted">2. Geometry</div>
+          <div id="step-col-3" class="p-2 rounded-xl border border-border bg-soft text-muted">3. Render</div>
+          <div id="step-col-4" class="p-2 rounded-xl border border-border bg-soft text-muted">4. Voice</div>
+          <div id="step-col-5" class="p-2 rounded-xl border border-border bg-soft text-muted col-span-2 sm:col-span-1">5. Stitch</div>
+        </div>
+
+        <!-- Charcoal Console Feed -->
+        <div class="terminal-box p-4">
+          <div class="flex items-center justify-between text-xs text-slate-400 pb-2 mb-2 border-b border-slate-800 font-mono">
+            <span>agent-process --stream</span>
+            <span id="console-clock">00:00</span>
+          </div>
+          <div id="console-feed" class="space-y-1.5 max-h-48 overflow-y-auto custom-scroll font-mono text-xs text-slate-200"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- SHOWCASE: GENERATED VIDEO & INSPECTOR DECK                                -->
+  <!-- ========================================================================= -->
+  <section id="showcase-section" class="py-12 px-4 lg:px-8 border-b border-border bg-soft hidden transition-all">
+    <div class="max-w-5xl mx-auto">
+      
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full badge-peach text-xs font-semibold mb-2">
+          Ready to Watch
+        </div>
+        <h2 id="showcase-title" class="text-2xl sm:text-3xl font-extrabold text-heading">
+          Binary Search in an Array
+        </h2>
+        <p id="showcase-meta" class="text-xs text-muted mt-1">1080×1920 Mobile Format</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        <!-- Video Player Column -->
+        <div class="md:col-span-5 flex flex-col items-center">
+          <div class="video-frame-container">
+            <video id="primary-video-player" controls playsinline>
+              <source id="primary-video-source" src="" type="video/mp4">
+            </video>
+          </div>
+          
+          <div class="mt-4 flex gap-2.5 w-full max-w-[280px]">
+            <a id="btn-download-video" href="#" download class="btn-orange flex-1 py-2.5 text-xs text-center flex items-center justify-center gap-1.5">
+              Download MP4
+            </a>
+            <button id="btn-copy-link" type="button" class="btn-secondary px-3.5 py-2.5 text-xs" title="Copy Link">
+              Copy Link
+            </button>
+          </div>
+        </div>
+
+        <!-- Inspector Deck Tabs -->
+        <div class="md:col-span-7 card-white p-5 sm:p-6">
+          <div class="flex items-center gap-2 border-b border-border pb-3 mb-4 text-xs font-semibold">
+            <button id="tab-btn-script" class="px-3 py-1.5 rounded-lg bg-soft border border-border text-heading">Voice Script</button>
+            <button id="tab-btn-code" class="px-3 py-1.5 rounded-lg text-muted hover:text-heading">Scene Code</button>
+            <button id="tab-btn-pathway" class="px-3 py-1.5 rounded-lg text-muted hover:text-heading">Next Topics</button>
+          </div>
+
+          <!-- Script Pane -->
+          <div id="tab-pane-script" class="space-y-3">
+            <div class="flex justify-between text-xs text-muted">
+              <span>Narration Text</span>
+              <span id="script-word-count" class="font-mono text-orange">0 words</span>
+            </div>
+            <div class="card-soft p-3.5 text-sm leading-relaxed text-heading">
+              <p id="deck-script-text"></p>
+            </div>
+          </div>
+
+          <!-- Code Pane -->
+          <div id="tab-pane-code" class="space-y-3 hidden">
+            <div class="flex justify-between text-xs text-muted">
+              <span>Python Code</span>
+              <button id="btn-copy-code" class="text-orange hover:underline">Copy Code</button>
+            </div>
+            <pre class="terminal-box p-3.5 text-xs font-mono text-emerald-400 overflow-x-auto max-h-64 custom-scroll"><code id="deck-code-text"></code></pre>
+          </div>
+
+          <!-- Pathway Pane -->
+          <div id="tab-pane-pathway" class="space-y-2 hidden">
+            <div class="text-xs text-muted mb-2">Continue learning pathway:</div>
+            <div id="deck-pathway-list" class="space-y-2"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 2. EXAMPLES SECTION                                                       -->
+  <!-- ========================================================================= -->
+  <section id="examples" class="py-16 px-4 lg:px-8 border-b border-border">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-heading">
+            Recent Examples
+          </h2>
+          <p class="text-sm text-muted mt-1">
+            Hover over any video to preview.
+          </p>
+        </div>
+
+        <!-- Reel Controls -->
+        <div class="hidden sm:flex items-center gap-2">
+          <button id="btn-reel-prev" class="p-2 rounded-xl btn-secondary" title="Previous">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button id="btn-reel-next" class="p-2 rounded-xl btn-secondary" title="Next">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Clean Grid / Reel of Videos -->
+      <div id="video-reel" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="p-8 text-center text-muted col-span-full text-sm">
+          Loading recent video examples...
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3. HOW IT WORKS SECTION (3 Simple Steps with Icons)                       -->
+  <!-- ========================================================================= -->
+  <section id="how-it-works" class="py-16 px-4 lg:px-8 border-b border-border bg-soft">
+    <div class="max-w-5xl mx-auto text-center">
+      
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-heading mb-2">
+        How It Works
+      </h2>
+      <p class="text-sm text-muted mb-12">
+        Three simple steps from prompt to video.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Step 1 -->
+        <div class="card-white p-6 text-center space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-soft text-orange mx-auto flex items-center justify-center font-bold text-lg border border-border">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-heading">1. Enter Topic</h3>
+          <p class="text-xs text-muted">Type any STEM concept.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card-white p-6 text-center space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-soft text-orange mx-auto flex items-center justify-center font-bold text-lg border border-border">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-heading">2. Compile Code</h3>
+          <p class="text-xs text-muted">Accurate Manim animation.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card-white p-6 text-center space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-soft text-orange mx-auto flex items-center justify-center font-bold text-lg border border-border">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-heading">3. Watch Video</h3>
+          <p class="text-xs text-muted">Vertical video with audio.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. FOOTER (Minimal, Essential Links)                                      -->
+  <!-- ========================================================================= -->
+  <footer class="py-10 px-4 lg:px-8 bg-white border-t border-border mt-auto text-xs text-muted">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-heading">Stemations</span>
+        <span>&copy; 2026. Autonomous STEM Video Engine.</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="#hero" class="hover:text-heading transition-colors">Studio</a>
+        <a href="#examples" class="hover:text-heading transition-colors">Examples</a>
+        <a href="/docs" target="_blank" class="hover:text-heading transition-colors">API Docs</a>
+        <a href="https://github.com/Haider-Ali7/stemations" target="_blank" class="hover:text-heading transition-colors flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: FOCUS VIDEO PLAYER                                                 -->
+  <!-- ========================================================================= -->
+  <div id="modal-video" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden">
+    <div class="relative bg-white rounded-2xl p-4 sm:p-5 max-w-sm w-full shadow-2xl border border-border">
+      <div class="flex items-center justify-between pb-3 mb-3 border-b border-border">
+        <h3 id="modal-video-title" class="text-sm font-bold text-heading truncate">Video Preview</h3>
+        <button id="modal-video-close" class="text-muted hover:text-heading p-1">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="video-frame-container mb-4">
+        <video id="modal-player" controls playsinline>
+          <source id="modal-player-source" src="" type="video/mp4">
+        </video>
+      </div>
+
+      <div class="flex justify-end">
+        <a id="modal-download-btn" href="#" download class="btn-orange px-4 py-2 text-xs">
+          Download MP4
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: SYSTEM DIAGNOSTIC REPORT                                           -->
+  <!-- ========================================================================= -->
+  <div id="modal-diagnostic" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden">
+    <div class="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-border">
+      <div class="flex items-center justify-between pb-3 mb-4 border-b border-border">
+        <h3 class="text-sm font-bold text-heading">System Diagnostics</h3>
+        <button id="modal-diagnostic-close" class="text-muted hover:text-heading p-1">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="diagnostic-lines" class="space-y-1.5 max-h-60 overflow-y-auto custom-scroll font-mono text-xs text-muted">
+        <div>Querying engines...</div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-border flex justify-end">
+        <button id="modal-diagnostic-refresh" class="btn-secondary px-3 py-1.5 text-xs">
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -28,7 +28,7 @@ class StemationPlanBuilder:
         try:
             plan, model_used = self.llm.generate_stemation(topic)
             return plan, "llm", model_used
-        except RuntimeError as exc:
+        except Exception as exc:
             plan = self._plan_from_skill_templates(topic, str(exc))
             return plan, "skill_template", None
 

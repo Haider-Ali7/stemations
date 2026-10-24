@@ -22,7 +22,9 @@ def render_manim_code(code: str, output_dir: str = "_output/scenes") -> Dict[str
             "stderr": str
         }
     """
-    out_path = Path(output_dir).resolve()
+    backend_dir = Path(__file__).resolve().parent.parent.parent
+    p = Path(output_dir)
+    out_path = p if p.is_absolute() else (backend_dir / p).resolve()
     out_path.mkdir(parents=True, exist_ok=True)
     
     unique_id = uuid.uuid4().hex[:8]

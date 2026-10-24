@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = PROJECT_ROOT / "demo_cache"
+if not CACHE_DIR.exists():
+    CACHE_DIR = PROJECT_ROOT.parent / "demo_cache"
 MANIFEST_PATH = CACHE_DIR / "manifest.json"
 
 

@@ -3,7 +3,7 @@ Shared model IDs and fallback order for Google GenAI (Gemini API).
 Gemma 4 may return transient 500 errors on some keys; Gemini 3.x is the reliable fallback.
 """
 
-# User-facing options (Streamlit sidebar)
+# User-facing options (frontend model selector)
 AVAILABLE_MODELS = [
     "gemini-3.5-flash-lite",
     "gemma-4-26b-a4b-it",

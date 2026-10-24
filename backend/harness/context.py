@@ -10,9 +10,12 @@ from typing import Dict, Any, Optional
 class SkillContextLoader:
     def __init__(self, skill_dir: Optional[str] = None):
         if skill_dir is None:
-            # Default to skills/stem-animator relative to project root
+            # Default to skills/stem-animator relative to backend or project root
             base_dir = Path(__file__).resolve().parent.parent
-            self.skill_dir = base_dir / "skills" / "stem-animator"
+            candidate = base_dir / "skills" / "stem-animator"
+            if not candidate.exists():
+                candidate = base_dir.parent / "skills" / "stem-animator"
+            self.skill_dir = candidate
         else:
             self.skill_dir = Path(skill_dir)
             

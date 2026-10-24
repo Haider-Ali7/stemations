@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(ROOT))
 
 from harness.context import SkillContextLoader
@@ -18,7 +19,7 @@ from harness.tools.audio_tool import generate_voiceover
 from harness.tools.compose_tool import compose_video_and_audio
 from harness.tools.manim_tool import render_manim_code
 
-CACHE = ROOT / "demo_cache"
+CACHE = ROOT / "backend" / "demo_cache" if (ROOT / "backend" / "demo_cache").exists() else ROOT / "demo_cache"
 
 DEMOS = [
     {
