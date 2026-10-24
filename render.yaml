@@ -8,10 +8,12 @@ services:
     plan: free
     region: oregon
     envVars:
+      - key: PORT
+        value: 10000
       - key: GEMINI_API_KEY
         sync: false  # Paste your Gemini API key in Render Dashboard
       - key: ALLOWED_ORIGINS
         value: "*"
       - key: MAX_OUTPUT_AGE_HOURS
         value: "6"
-    healthCheckPath: /api/health
+    healthCheckPath: /

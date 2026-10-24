@@ -30,7 +30,8 @@ COPY run.py /app/run.py
 # Create output directories
 RUN mkdir -p /app/backend/_output/scenes /app/backend/_output/audio /app/backend/_output/final
 
-EXPOSE 8000
+ENV PORT=10000
+EXPOSE 10000
 
 # Start unified FastAPI server serving both API and Frontend (honors Render's $PORT)
-CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-10000}"]
